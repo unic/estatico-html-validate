@@ -1,8 +1,3 @@
- [31m[1mHTML Error:[22m[39m index.html The character encoding was not declared. Proceeding using “windows-1252”.
- [31m[1mHTML Error:[22m[39m index.html Line 1, Column 5: Start tag seen without seeing a doctype first. Expected e.g. “<!DOCTYPE html>”.
- [90m<div[39m[31m[1m>[22m[39m
- [31m[1mHTML Error:[22m[39m index.html Line 1, Column 5: Element “head” is missing a required instance of child element “title”.
- [90m<div[39m[31m[1m>[22m[39m
- [31m[1mHTML Error:[22m[39m index.html Line 2, Column 15: End tag “h3” seen, but there were open elements.
+ [31m[1mHTML Error:[22m[39m index.html Line 9, Column 15: End tag “h3” seen, but there were open elements.
  [90m	<h2>Hello</h3[39m[31m[1m>[22m[39m
  gulp-w3cjs [36m/Users/thomas.jaggi/Sites/CoP/Gulp/Estatico Nou/estatico-html-validate/test/fixtures/index.html[39m [31mLinting error (details above)[39m
