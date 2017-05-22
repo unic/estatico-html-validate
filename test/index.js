@@ -23,7 +23,7 @@ module.exports = {
       dest: './test/results/'
     }
 
-    validate.task(config).on('finish', done)
+    validate.fn(config).on('finish', done)
   },
 
   default: function () {

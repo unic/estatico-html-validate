@@ -23,7 +23,7 @@ const defaults = {
   ]
 }
 
-const task = (options) => {
+const fn = (options, cb) => {
   const gulp = require('gulp')
   const merge = require('lodash.merge')
   const changed = require('gulp-changed-in-place')
@@ -57,10 +57,13 @@ const task = (options) => {
 
       done(null, file)
     }))
+
+    // (Optional) callback
+    .on('end', cb || (() => {}))
 }
 
 module.exports = {
   name,
-  task,
+  fn,
   defaults
 }
