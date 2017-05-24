@@ -18,12 +18,13 @@ const defaults = {
     util.log(error.plugin, util.colors.cyan(error.fileName), util.colors.red(error.message))
   },
   watch: [
-    // Disable watch because of rate-limited w3c API
-    // If a local API is used, this can be reenabled
+    // Possibly needs to be disabled due to rate-limited w3c API
+    // Altrnative: Use local validator instance
+    './build/*.html'
   ]
 }
 
-const fn = (options, cb) => {
+const fn = (options, fileEvents, cb) => {
   const gulp = require('gulp')
   const merge = require('lodash.merge')
   const changed = require('gulp-changed-in-place')
@@ -31,6 +32,11 @@ const fn = (options, cb) => {
   const through = require('through2')
 
   const config = merge({}, defaults, options)
+
+  if (typeof fileEvents === 'function') {
+    cb = fileEvents
+    fileEvents = null
+  }
 
   return gulp.src(config.src, {
     base: config.srcBase
