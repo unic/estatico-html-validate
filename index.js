@@ -19,7 +19,7 @@ const defaults = {
   },
   watch: [
     // Possibly needs to be disabled due to rate-limited w3c API
-    // Altrnative: Use local validator instance
+    // Alternative: Use local validator instance
     './build/*.html'
   ]
 }
