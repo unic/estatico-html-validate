@@ -15,15 +15,15 @@ module.exports = {
       log += s.replace(/\[.*?\]/g, '')
     }
 
-    const validate = require('../index.js')
-
     const config = {
       src: './test/fixtures/*.html',
       srcBase: './test/fixtures',
       dest: './test/results/'
     }
 
-    validate.fn(config).on('finish', done)
+    const task = require('../index.js')(config)
+
+    task.fn().on('finish', done)
   },
 
   default: function () {
