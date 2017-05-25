@@ -1,5 +1,3 @@
-const name = 'html:validate'
-
 const defaults = {
   src: [
     './build/*.html',
@@ -24,14 +22,11 @@ const defaults = {
   ]
 }
 
-const fn = (options, fileEvents, cb) => {
+const fn = (config, fileEvents, cb) => {
   const gulp = require('gulp')
-  const merge = require('lodash.merge')
   const changed = require('gulp-changed-in-place')
   const w3cjs = require('gulp-w3cjs')
   const through = require('through2')
-
-  const config = merge({}, defaults, options)
 
   if (typeof fileEvents === 'function') {
     cb = fileEvents
@@ -68,8 +63,14 @@ const fn = (options, fileEvents, cb) => {
     .on('end', cb || (() => {}))
 }
 
-module.exports = {
-  name,
-  fn,
-  defaults
+module.exports = (options) => {
+  const merge = require('lodash.merge')
+
+  const config = merge({}, defaults, options)
+
+  return {
+    defaults,
+    config,
+    fn: fn.bind(null, config)
+  }
 }
