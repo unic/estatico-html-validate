@@ -10,11 +10,11 @@ const merge = require('lodash.merge');
 
 const defaults = {
   src: [
-    './build/*.html',
-    './build/modules/**/*.html',
-    './build/pages/**/*.html',
+    './dist/*.html',
+    './dist/modules/**/*.html',
+    './dist/pages/**/*.html',
   ],
-  srcBase: './build/',
+  srcBase: './dist/',
   plugins: {
     w3cjs: {
       // url: 'http://localhost:8888'
@@ -26,7 +26,9 @@ const defaults = {
   watch: [
     // Possibly needs to be disabled due to rate-limited w3c API
     // Alternative: Use local validator instance
-    './build/*.html',
+    './dist/*.html',
+    './dist/modules/**/*.html',
+    './dist/pages/**/*.html',
   ],
 };
 
