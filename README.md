@@ -15,7 +15,7 @@ const gulp = require('gulp');
 const validateTask = require('estatico-html-validate');
 const validateOptions = {}; // Custom options, deep-merged into defaults via _.merge
 
-gulp.task('html:validate', () => handlebarsTask(validateOptions));
+gulp.task('html:validate', () => validateTask(validateOptions));
 ```
 
 ### Options
