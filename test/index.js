@@ -1,39 +1,30 @@
-const fs = require('fs')
-const should = require('should') // eslint-disable-line
+const test = require('ava');
+const sinon = require('sinon');
+const stripAnsi = require('strip-ansi');
+const path = require('path');
+const del = require('del');
+const task = require('../index.js');
 
-let write
-let log = ''
+const defaults = {
+  src: './test/fixtures/*.html',
+  srcBase: './test/fixtures',
+  dest: './test/results/',
+};
 
-module.exports = {
-  before: function (done) {
-    this.timeout(5000)
+const stripLog = str => stripAnsi(str.replace(/\n/gm, '').replace(/\t/g, ' ').replace(/\s\s+/g, ' '));
 
-    write = process.stdout.write
+test.cb('default', (t) => {
+  const spy = sinon.spy(console, 'log');
 
-    // Overwrite stdout to grab validation error log
-    process.stdout.write = (s) => {
-      log += s.replace(/\[.*?\]/g, '')
-    }
+  task(defaults).on('finish', () => {
+    spy.restore();
 
-    const config = {
-      src: './test/fixtures/*.html',
-      srcBase: './test/fixtures',
-      dest: './test/results/'
-    }
+    t.is(stripLog(spy.getCall(0).args.join(' ')), 'HTML Error: index.html Line 9, Column 15: End tag “h3” seen, but there were open elements.');
+    t.is(stripLog(spy.getCall(1).args.join(' ')), ' <h2>Hello</h3>');
+    t.is(stripLog(spy.getCall(2).args.join(' ')), 'estatico-html-validate (reporter) /Users/me/Sites/Unic/Estatico Nou/estatico-html-validate/test/fixtures/index.html Linting error (details above)');
 
-    const task = require('../index.js')(config)
+    t.end();
+  });
+});
 
-    task.fn().on('finish', done)
-  },
-
-  default: function () {
-    process.stdout.write = write
-
-    const expected = fs.readFileSync('./test/expected/log.txt').toString()
-
-    expected.should.be.eql(log)
-  },
-
-  after: function () {
-  }
-}
+test.afterEach(() => del(path.join(__dirname, '/results')));

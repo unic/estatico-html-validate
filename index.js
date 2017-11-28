@@ -1,45 +1,48 @@
+const gulp = require('gulp');
+const plumber = require('gulp-plumber');
+const changed = require('gulp-changed-in-place');
+const w3cjs = require('gulp-w3cjs');
+const through = require('through2');
+const log = require('fancy-log');
+const PluginError = require('plugin-error');
+const chalk = require('chalk');
+const merge = require('lodash.merge');
+
 const defaults = {
   src: [
     './build/*.html',
     './build/modules/**/*.html',
-    './build/pages/**/*.html'
+    './build/pages/**/*.html',
   ],
   srcBase: './build/',
   plugins: {
     w3cjs: {
       // url: 'http://localhost:8888'
-    }
+    },
   },
-  errorHandler: (error) => {
-    const util = require('gulp-util')
-
-    util.log(error.plugin, util.colors.cyan(error.fileName), util.colors.red(error.message))
+  errorHandler: (err) => {
+    log(`estatico-html-validate${err.plugin ? ` (${err.plugin})` : null}`, chalk.cyan(err.fileName), chalk.red(err.message));
   },
   watch: [
     // Possibly needs to be disabled due to rate-limited w3c API
     // Alternative: Use local validator instance
-    './build/*.html'
-  ]
-}
+    './build/*.html',
+  ],
+};
 
-const fn = (config, fileEvents, cb) => {
-  const gulp = require('gulp')
-  const changed = require('gulp-changed-in-place')
-  const w3cjs = require('gulp-w3cjs')
-  const through = require('through2')
-
-  if (typeof fileEvents === 'function') {
-    cb = fileEvents
-    fileEvents = null
-  }
+module.exports = (options) => {
+  const config = merge({}, defaults, options);
 
   return gulp.src(config.src, {
-    base: config.srcBase
+    base: config.srcBase,
   })
+
+    // Prevent stream from unpiping on error
+    .pipe(plumber())
 
     // Do not pass unchanged files
     .pipe(changed({
-      firstPass: true
+      firstPass: true,
     }))
 
     // Send to validation API
@@ -48,29 +51,13 @@ const fn = (config, fileEvents, cb) => {
     // Handle errors
     .pipe(through.obj((file, enc, done) => {
       if (!file.w3cjs.success) {
-        let error = new Error('Linting error (details above)')
+        const err = new PluginError('reporter', 'Linting error (details above)');
 
-        error.plugin = 'gulp-w3cjs'
-        error.fileName = file.path
+        err.fileName = file.path;
 
-        config.errorHandler(error)
+        return done(err, file);
       }
 
-      done(null, file)
-    }))
-
-    // (Optional) callback
-    .on('end', cb || (() => {}))
-}
-
-module.exports = (options) => {
-  const merge = require('lodash.merge')
-
-  const config = merge({}, defaults, options)
-
-  return {
-    defaults,
-    config,
-    fn: fn.bind(null, config)
-  }
-}
+      return done(null, file);
+    }).on('error', config.errorHandler));
+};
