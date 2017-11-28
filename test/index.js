@@ -11,7 +11,7 @@ const defaults = {
   dest: './test/results/',
 };
 
-const stripLog = str => stripAnsi(str.replace(/\n/gm, '').replace(/\t/g, ' ').replace(/\s\s+/g, ' '));
+const stripLog = str => stripAnsi(str.replace(/\n/gm, '').replace(/\t/g, ' ')).replace(/\s\s+/g, ' ');
 
 test.cb('default', (t) => {
   const spy = sinon.spy(console, 'log');
